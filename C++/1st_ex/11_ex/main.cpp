@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -5,33 +6,51 @@
 using namespace std;
 using vectors = vector<vector<int>>;
 
-#define M 10
-#define N 10
+#define M 5
+#define N 5
 
-void mult_el(vector<int> &, vectors);
 void out_matrix(vectors &);
 int gen_rand_num();
 void init(vectors &);
+bool is_prime(int);
+int find_max_prime(vectors &);
 
 int main() {
-  vectors matrix(M);
-  vector<int> arr(N, 1);
+  vectors matrix(M, vector<int>(N, 0));
 
   init(matrix);
   out_matrix(matrix);
+	cout << find_max_prime(matrix) << endl;
 
-  mult_el(arr, matrix);
-  cout << endl;
-  for (auto it : arr)
-    cout << it << ' ';
-  cout << endl;
   return 0;
 }
 
-void mult_el(vector<int> &arr, vectors matrix) {
-  for (int column = 0; column < N; column++)
-    for (int row = 0; row < M; row++)
-      arr[column] *= matrix[row][column];
+bool is_prime(int num) {
+  if (num <= 1 || num % 2 == 0 || num % 3 == 0)
+    return false;
+  if (num <= 3)
+    return true;
+
+  for (int i = 5; i < sqrt(num); i += 6)
+    if (num % i == 0 || num % (i + 2) == 0)
+      return false;
+  return true;
+}
+
+int find_max_prime(vectors &matrix) {
+	vector<int> prime_nums(47, 0);
+	for (size_t i = 0; i < matrix.size(); i++)
+		for (size_t j = 0; j < matrix[i].size(); j++) {
+			if (is_prime(matrix[i][j]))
+				prime_nums[matrix[i][j]]++;
+		}
+	int max_count = *max_element(prime_nums.begin(), prime_nums.end());
+
+	int i = 0;
+	for (; prime_nums[i] != max_count; i++)
+		;
+
+	return i;
 }
 
 void out_matrix(vectors &matrix) {
@@ -45,12 +64,12 @@ void out_matrix(vectors &matrix) {
 int gen_rand_num() {
   random_device rd;
   mt19937 gen(rd());
-  uniform_int_distribution<> dis(1, 10);
+  uniform_int_distribution<> dis(0, 50);
   return dis(gen);
 }
 
 void init(vectors &matrix) {
   for (int i = 0; i < M; i++)
     for (int j = 0; j < N; j++)
-      matrix[i].push_back(gen_rand_num());
+			matrix[i][j] = gen_rand_num();
 }
