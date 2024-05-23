@@ -1,6 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <random>
+#include <vector>
 
 using namespace std;
 using vectors = vector<vector<int>>;
@@ -13,7 +13,6 @@ void out_matrix(vectors &);
 int gen_rand_num();
 void init(vectors &);
 
-
 int main() {
   vectors matrix(M);
   vector<int> arr(N, 1);
@@ -22,7 +21,7 @@ int main() {
   out_matrix(matrix);
 
   mult_el(arr, matrix);
-	cout << endl;
+  cout << endl;
   for (auto it : arr)
     cout << it << ' ';
   cout << endl;
@@ -50,7 +49,7 @@ int gen_rand_num() {
   return dis(gen);
 }
 
-void init(vectors & matrix) {
+void init(vectors &matrix) {
   for (int i = 0; i < M; i++)
     for (int j = 0; j < N; j++)
       matrix[i].push_back(gen_rand_num());
