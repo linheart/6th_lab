@@ -18,6 +18,7 @@ void max_min_el(vectors &, vector<int> &);
 int main() {
   vectors matrix(M, vector<int>(N, 0));
   vector<int> nums;
+
   while (nums.empty()) {
     init(matrix);
     max_min_el(matrix, nums);
@@ -25,8 +26,9 @@ int main() {
 
   out_matrix(matrix);
 
-  for (auto it : nums)
+  for (auto it : nums) {
     cout << it << ' ';
+  }
   cout << endl;
   return 0;
 }
@@ -37,18 +39,19 @@ void max_min_el(vectors &matrix, vector<int> &nums) {
     int j = find(i.begin(), i.end(), min_in_row) - i.begin();
     int row = 0;
 
-    for (; row < M && matrix[row][j] <= i[j]; row++)
-      ;
+    for (; row < M && matrix[row][j] <= i[j]; row++);
 
-    if (row == M)
+    if (row == M) {
       nums.push_back(i[j]);
+    }
   }
 }
 
 void out_matrix(vectors &matrix) {
   for (auto row : matrix) {
-    for (auto column : row)
+    for (auto column : row) {
       cout << column << ' ';
+    }
     cout << endl;
   }
 }
@@ -62,15 +65,16 @@ int gen_rand_num() {
 
 void init(vectors &matrix) {
   unordered_set<int> nums;
-  while (nums.size() < M * N)
+  while (nums.size() < M * N) {
     nums.insert(gen_rand_num());
+  }
 
   auto it = nums.begin();
 
   int index = 0;
-  for (int i = 0; i < M; i++)
-    for (int j = 0; j < N; j++) {
+  for (int i = 0; i < M; i++) {
+    for (int j = 0; j < N; j++, it++) {
       matrix[i][j] = *it;
-      it++;
     }
+  }
 }
