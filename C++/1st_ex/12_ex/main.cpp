@@ -21,27 +21,30 @@ int main() {
 void out_matrix(vectors &matrix) {
   for (auto row : matrix) {
     for (auto column : row) {
-      if (column == 0)
+      if (column == 0) {
         cout << "000 ";
-      else
+      } else {
         cout << column << ' ';
+      }
     }
     cout << endl;
   }
 }
 
 void under_diag(vectors &matrix, int i, int N) {
-  for (int row = i + 1; row < N; row++)
+  for (int row = i + 1; row < N; row++) {
     matrix[row][i] = 100 + i;
+  }
 }
 
 void above_diag(vectors &matrix, int i, int N) {
-  for (int row = 0; row < i; row++)
-    matrix[row][i] = 100 + N - 1 - i;
+  for (int row = 0; row < i; row++) {
+    matrix[row][i] = 100 + N - i - 1;
+  }
 }
 
 void init(vectors &matrix, int N) {
-  for (int i = 0, j = 0; i < N; i++, j++) {
+  for (int i = 0; i < N; i++) {
     under_diag(matrix, i, N);
     above_diag(matrix, i, N);
   }
