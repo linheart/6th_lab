@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -58,8 +59,9 @@ void print_hex(const string &text);
 void print_matricies_hex(const two_d_matrix &, const three_d_matrix &);
 string init_key();
 string init_text();
-pair<two_d_matrix, three_d_matrix> init_matricies(const string &,
-                                                  const string &);
-void key_exp(two_d_matrix &);
+two_d_matrix init_key_matrix(const string &);
+three_d_matrix init_text_matrix(const string &);
+void key_exp(two_d_matrix &, int);
+void xor_matricies(const two_d_matrix &, three_d_matrix &);
 
 #endif // COMMON_H

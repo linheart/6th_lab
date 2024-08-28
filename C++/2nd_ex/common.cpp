@@ -1,9 +1,4 @@
 #include "common.h"
-#include "decrypt.h"
-#include "encrypt.h"
-#include <algorithm>
-#include <ios>
-#include <limits>
 
 void print_matricies_hex(const two_d_matrix &key, const three_d_matrix &text) {
   for (auto row : key) {
@@ -11,6 +6,17 @@ void print_matricies_hex(const two_d_matrix &key, const three_d_matrix &text) {
       cout << hex << static_cast<int>(col) << ' ';
     }
     cout << "\n";
+  }
+
+  cout << endl;
+  for (auto block : text) {
+    for (auto row : block) {
+      for (auto col : row) {
+        cout << hex << static_cast<int>(col) << ' ';
+      }
+      cout << endl;
+    }
+    cout << endl;
   }
 }
 void print_hex(const string &text) {
@@ -41,22 +47,34 @@ string init_text() {
   getline(cin, text);
   return text;
 }
-pair<two_d_matrix, three_d_matrix> init_matricies(const string &input_key,
-                                                  const string &input_text) {
+two_d_matrix init_key_matrix(const string &input_key) {
   two_d_matrix key(Nk, vector<unsigned char>(Nb, 0));
-  three_d_matrix text(input_text.size() + 1,
-                      two_d_matrix(Nb, vector<unsigned char>(4, 0)));
-
   for (int i = 0; i < Nk; i++) {
     for (int j = 0; j < Nb; j++) {
       key[j][i] = input_key[i * 4 + j];
     }
   }
-
-  return {key, text};
+  return key;
 }
 
-void key_exp(two_d_matrix &key) {
+three_d_matrix init_text_matrix(const string &input_text) {
+  size_t blocks = static_cast<size_t>(ceil(input_text.size() / 16.));
+  three_d_matrix state(blocks, two_d_matrix(Nb, vector<unsigned char>(4, 0)));
+  size_t size = input_text.size();
+  size_t index = 0;
+
+  for (size_t i = 0; i < blocks; i++) {
+    for (size_t row = 0; row < Nk; row++) {
+      for (size_t col = 0; col < Nb && index < size; col++) {
+        state[i][col][row] = input_text[index++];
+      }
+    }
+  }
+
+  return state;
+}
+
+void key_exp(two_d_matrix &key, int round) {
   vector<unsigned char> tmp(Nb);
   transform(key.begin(), key.end(), tmp.begin(),
             [](const vector<unsigned char> &row) { return row[0]; });
@@ -64,13 +82,24 @@ void key_exp(two_d_matrix &key) {
   for (size_t i = 0; i < Nb; i++) {
     key[i][0] =
         s_box[key[(i + 1) % 4][Nb - 1] / 16][key[(i + 1) % 4][Nb - 1] % 16];
-    key[i][0] ^= r_con[0][i];
+    key[i][0] ^= r_con[round][i];
     key[i][0] ^= tmp[i];
   }
 
   for (size_t i = 0; i < Nb; i++) {
     for (size_t j = 1; j < Nb; j++) {
       key[i][j] = key[i][j - 1] ^ key[i][j];
+    }
+  }
+}
+
+void xor_matricies(const two_d_matrix &round_key, three_d_matrix &state) {
+  size_t blocks = state.size();
+  for (size_t i = 0; i < blocks; i++) {
+    for (size_t row = 0; row < Nk; row++) {
+      for (size_t col = 0; col < Nb; col++) {
+        state[i][row][col] ^= round_key[row][col];
+      }
     }
   }
 }
