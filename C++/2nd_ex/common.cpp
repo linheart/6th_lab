@@ -1,29 +1,15 @@
 #include "common.h"
-#include <cmath>
 
-void print_matricies_hex(const two_d_matrix &key, const three_d_matrix &text) {
-  for (auto row : key) {
-    for (auto col : row) {
-      cout << hex << static_cast<int>(col) << ' ';
-    }
-    cout << "\n";
-  }
-
-  cout << endl;
-  for (auto block : text) {
-    for (auto row : block) {
-      for (auto col : row) {
-        cout << hex << static_cast<int>(col) << ' ';
+void print_text(three_d_matrix &text) {
+  size_t blocks = text.size();
+  for (size_t i = 0; i < blocks; i++) {
+    for (size_t j = 0; j < Nb; j++) {
+      for (size_t k = 0; k < Nb; k++) {
+        cout << text[i][k][j];
       }
-      cout << endl;
     }
-    cout << endl;
   }
-}
-void print_hex(const string &text) {
-  for (auto symbol : text) {
-    cout << hex << static_cast<int>(symbol) << ' ';
-  }
+  cout << endl;
 }
 
 string init_key() {
@@ -35,7 +21,7 @@ string init_key() {
 
     if (key.size() > 16) {
       cout << "The length exceeds the allowed value" << endl;
-      /*cin.ignore(numeric_limits<streamsize>::max(), '\n');*/
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       continue;
     }
     return key;
@@ -48,12 +34,18 @@ string init_text() {
   getline(cin, text);
   return text;
 }
+
 two_d_matrix init_key_matrix(const string &input_key) {
   two_d_matrix key(Nk, vector<unsigned char>(Nb, 0));
-  for (int i = 0; i < Nk; i++) {
-    for (int j = 0; j < Nb; j++) {
-      key[j][i] = input_key[i * 4 + j];
+  size_t size = input_key.size();
+  size_t index = 0;
+  for (size_t i = 0; i < Nk; i++) {
+    for (size_t j = 0; j < Nb && index < size; j++) {
+      key[j][i] = input_key[index++];
     }
+  }
+  if (size < 4 * Nb) {
+    key[3][Nb - 1] = 1;
   }
   return key;
 }
@@ -72,9 +64,6 @@ three_d_matrix init_text_matrix(const string &input_text) {
     }
   }
 
-  if (size % Nb) {
-    state[blocks - 1][3][Nb - 1] = static_cast<unsigned char>(size);
-  }
   return state;
 }
 

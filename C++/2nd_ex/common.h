@@ -14,7 +14,7 @@ constexpr size_t Nr = 10;
 using namespace std;
 
 using two_d_matrix = vector<vector<unsigned char>>;
-using three_d_matrix = vector<vector<vector<unsigned char>>>;
+using three_d_matrix = vector<two_d_matrix>;
 
 const two_d_matrix s_box = {{0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
                              0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
@@ -55,8 +55,7 @@ const two_d_matrix r_con = {{0x01, 0x00, 0x00, 0x00}, {0x02, 0x00, 0x00, 0x00},
                             {0x40, 0x00, 0x00, 0x00}, {0x80, 0x00, 0x00, 0x00},
                             {0x1b, 0x00, 0x00, 0x00}, {0x36, 0x00, 0x00, 0x00}};
 
-void print_hex(const string &text);
-void print_matricies_hex(const two_d_matrix &, const three_d_matrix &);
+void print_text(three_d_matrix &);
 string init_key();
 string init_text();
 two_d_matrix init_key_matrix(const string &);

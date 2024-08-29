@@ -3,35 +3,45 @@
 #include "encrypt.h"
 
 int main() {
-  string input_key = "Thats my Kung Fu";
-  string input_message = "Two One Nine Two";
+  string input_key = init_key();
+  string input_text = init_text();
 
   two_d_matrix round_key = init_key_matrix(input_key);
-  three_d_matrix state = init_text_matrix(input_message);
+  three_d_matrix state = init_text_matrix(input_text);
   three_d_matrix ext_keys;
 
   key_exp(round_key, ext_keys);
+  xor_matricies(ext_keys[0], state);
 
-  for (size_t i = 0; i < Nr - 1; i++) {
-    xor_matricies(ext_keys[i], state);
+  for (size_t i = 1; i < Nr; i++) {
     sub_bytes(state);
     shift_left(state);
     mix_columns(state);
+    xor_matricies(ext_keys[i], state);
   }
 
-  xor_matricies(ext_keys[Nr - 1], state);
   sub_bytes(state);
   shift_left(state);
   xor_matricies(ext_keys[Nr], state);
 
-  size_t blocks = state.size();
-  for (size_t i = 0; i < blocks; i++) {
-    for (size_t j = 0; j < Nb; j++) {
-      for (size_t k = 0; k < Nb; k++) {
-        cout << hex << static_cast<int>(state[i][k][j]) << ' ';
-      }
-    }
+  cout << "Cipher text: ";
+  print_text(state);
+
+  xor_matricies(ext_keys[Nr], state);
+
+  for (int i = Nr - 1; i >= 1; i--) {
+    shift_right(state);
+    inv_sub_bytes(state);
+    xor_matricies(ext_keys[i], state);
+    inv_mix_columns(state);
   }
+
+  shift_right(state);
+  inv_sub_bytes(state);
+  xor_matricies(ext_keys[0], state);
+
+  cout << "Original text: ";
+  print_text(state);
 
   return 0;
 }

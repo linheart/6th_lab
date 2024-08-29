@@ -1,5 +1,4 @@
 #include "encrypt.h"
-#include "common.h"
 
 void sub_bytes(three_d_matrix &state) {
   size_t blocks = state.size();
