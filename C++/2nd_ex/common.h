@@ -61,7 +61,7 @@ string init_key();
 string init_text();
 two_d_matrix init_key_matrix(const string &);
 three_d_matrix init_text_matrix(const string &);
-void key_exp(two_d_matrix &, int);
+void key_exp(const two_d_matrix &, three_d_matrix &);
 void xor_matricies(const two_d_matrix &, three_d_matrix &);
 
 #endif // COMMON_H

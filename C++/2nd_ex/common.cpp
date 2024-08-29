@@ -1,4 +1,5 @@
 #include "common.h"
+#include <cmath>
 
 void print_matricies_hex(const two_d_matrix &key, const three_d_matrix &text) {
   for (auto row : key) {
@@ -71,25 +72,35 @@ three_d_matrix init_text_matrix(const string &input_text) {
     }
   }
 
+  if (size % Nb) {
+    state[blocks - 1][3][Nb - 1] = static_cast<unsigned char>(size);
+  }
   return state;
 }
 
-void key_exp(two_d_matrix &key, int round) {
+void key_exp(const two_d_matrix &key, three_d_matrix &ext_keys) {
+  ext_keys.push_back(key);
+  two_d_matrix state;
   vector<unsigned char> tmp(Nb);
-  transform(key.begin(), key.end(), tmp.begin(),
-            [](const vector<unsigned char> &row) { return row[0]; });
 
-  for (size_t i = 0; i < Nb; i++) {
-    key[i][0] =
-        s_box[key[(i + 1) % 4][Nb - 1] / 16][key[(i + 1) % 4][Nb - 1] % 16];
-    key[i][0] ^= r_con[round][i];
-    key[i][0] ^= tmp[i];
-  }
+  for (size_t rnd = 1; rnd <= Nr; rnd++) {
+    state = ext_keys[rnd - 1];
 
-  for (size_t i = 0; i < Nb; i++) {
-    for (size_t j = 1; j < Nb; j++) {
-      key[i][j] = key[i][j - 1] ^ key[i][j];
+    for (size_t i = 0; i < Nb; i++) {
+      tmp[i] = state[(i + 1) % 4][Nb - 1];
+      tmp[i] = s_box[tmp[i] / 16][tmp[i] % 16];
+      tmp[i] ^= r_con[rnd - 1][i];
     }
+
+    for (size_t i = 0; i < Nb; i++) {
+      state[i][0] ^= tmp[i];
+    }
+    for (size_t col = 1; col < Nb; col++) {
+      for (size_t row = 0; row < Nb; row++) {
+        state[row][col] ^= state[row][col - 1];
+      }
+    }
+    ext_keys.push_back(state);
   }
 }
 

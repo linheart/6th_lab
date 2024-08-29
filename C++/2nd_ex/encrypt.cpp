@@ -13,7 +13,7 @@ void sub_bytes(three_d_matrix &state) {
   }
 }
 
-void shift_rows(three_d_matrix &state) {
+void shift_left(three_d_matrix &state) {
   size_t blocks = state.size();
   for (size_t i = 0; i < blocks; i++) {
     for (size_t row = 0; row < Nk; row++) {
