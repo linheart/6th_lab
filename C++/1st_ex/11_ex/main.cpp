@@ -40,7 +40,7 @@ bool is_prime(int num) {
 }
 
 int find_max_prime(vectors &matrix) {
-  vector<int> prime_nums(47, 0);
+  vector<int> prime_nums(48, 0);
   for (size_t i = 0; i < matrix.size(); i++) {
     for (size_t j = 0; j < matrix[i].size(); j++) {
       if (is_prime(matrix[i][j])) prime_nums[matrix[i][j]]++;
